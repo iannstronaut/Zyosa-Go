@@ -1,0 +1,17 @@
+app:
+  name: zyosa_api
+  host: 127.0.0.1
+  port: 5000
+  debug: true
+  prefork: false
+database:
+  host: 127.0.0.1
+  port: 3306
+  user: root
+  password:
+  name: db_zyosa
+auth:
+  access_token_exp_min: 60
+  refresh_token_exp_day: 30
+  jwt_secrets: "secrets"
+  jwt_salt: "salt"
