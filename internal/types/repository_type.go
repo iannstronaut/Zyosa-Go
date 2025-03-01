@@ -33,12 +33,25 @@ func (r *Repository[T]) FindByID(id string, entity *T) (*T, error) {
 	return entity, nil
 }
 
-func (r *Repository[T]) FindAll(limit int, offset int, entities *[]T) error {
-	return r.DB.Limit(limit).Offset(offset).Find(entities).Error
+func (r *Repository[T]) FindAll(limit int, offset int, entities *[]T) (*[]T, error) {
+	err := r.DB.Limit(limit).Offset(offset).Find(entities).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, err
+		}
+		return nil, err
+	}
+	return entities, nil
 }
 
-func (r *Repository[T]) CountByID(id string) (int64, error) {
+func (r *Repository[T]) CountByID(id string) (*int64, error) {
 	var count int64
 	err := r.DB.Model(new(T)).Where("id = ?", id).Count(&count).Error
-	return count, err
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, err
+		}
+		return nil, err
+	}
+	return &count, err
 }

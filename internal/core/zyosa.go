@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"zyosa/internal/delivery/middleware"
 	"zyosa/internal/delivery/routes"
-	"zyosa/internal/domains/user"
-	"zyosa/internal/domains/user/repository"
+	UserHandler"zyosa/internal/domains/user"
+	UserRepository "zyosa/internal/domains/user/repository"
+	AdminRepository "zyosa/internal/domains/admin/repository"
+	AdminHandler "zyosa/internal/domains/admin"
 	"zyosa/internal/services"
 
 	"github.com/gofiber/fiber/v2"
@@ -23,14 +25,19 @@ type Zyosa struct {
 
 func Init(zyosa *Zyosa) {
 	jwtService := services.NewJWTService(zyosa.Viper.GetString("app.secret"))
-	userRepo := repository.NewUserRepository(zyosa.DB)
-	userHandler := user.NewHandler(userRepo, zyosa.Viper, jwtService)
+
+	userRepo := UserRepository.NewUserRepository(zyosa.DB)
+	userHandler := UserHandler.NewHandler(userRepo, zyosa.Viper, jwtService)
+
+	adminRepo := AdminRepository.NewAdminRepository(zyosa.DB)
+	adminHandler := AdminHandler.NewHandler(adminRepo, zyosa.Viper, jwtService)
 
 	authMiddleware := middleware.NewAuthMiddleware(jwtService)
 
 	route := routes.Route{
 		App:            zyosa.App,
 		UserRoute:      userHandler,
+		AdminRoute:     adminHandler,
 		JWTService:     jwtService,
 		AuthMiddleware: authMiddleware,
 	}

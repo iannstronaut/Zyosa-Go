@@ -1,11 +1,11 @@
-package user
+package admin
 
 type LoginRequest struct {
 	Username string `json:"username" validate:"required,min=3,max=50"`
 	Password string `json:"password" validate:"required,min=8"`
 }
 
-type RegisterRequest struct {
+type AddAdminRequest struct {
 	Username  string  `json:"username" validate:"required,min=3,max=50"`
 	FirstName string  `json:"first_name" validate:"required"`
 	LastName  string  `json:"last_name" validate:"required"`
