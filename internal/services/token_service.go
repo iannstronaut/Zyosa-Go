@@ -62,8 +62,15 @@ func (j *JWTService) ValidateAccessToken(tokenStr string) (*UserClaims, error) {
 }
 
 // Unserialize hanya melakukan parsing token JWT tanpa validasi
-func (j *JWTService) Unserialize(tokenStr string) (*jwt.Token, error) {
-	return jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
-		return []byte(j.secret), nil
-	})
+func (j *JWTService) Unserialize(tokenStr string) (*UserClaims, error) {
+	claims := &UserClaims{}
+
+	// Gunakan ParseWithClaims tetapi abaikan validasi expiry
+	_, _, err := new(jwt.Parser).ParseUnverified(tokenStr, claims)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse token: %v", err)
+	}
+
+	return claims, nil
 }
+

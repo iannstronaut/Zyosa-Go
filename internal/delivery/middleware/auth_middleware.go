@@ -18,7 +18,7 @@ func NewAuthMiddleware(jwtService *services.JWTService) *AuthMiddleware {
 	}
 }
 
-func (m *AuthMiddleware) EnsureAuthenticated(requiredRole string) fiber.Handler {
+func (m *AuthMiddleware) EnsureAuthenticatedRole(requiredRole string) fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
 		token := ctx.Cookies("access_token")
 		if token == "" {
@@ -39,4 +39,15 @@ func (m *AuthMiddleware) EnsureAuthenticated(requiredRole string) fiber.Handler 
 
 		return ctx.Next()
 	}
+}
+
+func (m *AuthMiddleware) EnsureAuthenticated(ctx *fiber.Ctx) error {
+	access_token := ctx.Cookies("access_token")
+	if access_token == "" {
+		return helpers.ErrorResponse(ctx, fiber.StatusUnauthorized, true, fmt.Errorf("unauthorized"))
+	}
+
+	ctx.Locals("access_token", access_token)
+
+	return ctx.Next()
 }

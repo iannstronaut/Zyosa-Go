@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"zyosa/internal/delivery/middleware"
 	"zyosa/internal/delivery/routes"
-	UserHandler"zyosa/internal/domains/user"
-	UserRepository "zyosa/internal/domains/user/repository"
-	AdminRepository "zyosa/internal/domains/admin/repository"
 	AdminHandler "zyosa/internal/domains/admin"
+	AdminRepository "zyosa/internal/domains/admin/repository"
+	SessionHandler "zyosa/internal/domains/session"
+	SessionRepository "zyosa/internal/domains/session/repository"
+	UserHandler "zyosa/internal/domains/user"
+	UserRepository "zyosa/internal/domains/user/repository"
 	"zyosa/internal/services"
 
 	"github.com/gofiber/fiber/v2"
@@ -32,6 +34,9 @@ func Init(zyosa *Zyosa) {
 	adminRepo := AdminRepository.NewAdminRepository(zyosa.DB)
 	adminHandler := AdminHandler.NewHandler(adminRepo, zyosa.Viper, jwtService)
 
+	sessionRepo := SessionRepository.NewSessionRepository(zyosa.DB)
+	sessionHandler := SessionHandler.NewHandler(sessionRepo, zyosa.Viper, jwtService)
+
 	authMiddleware := middleware.NewAuthMiddleware(jwtService)
 
 	route := routes.Route{
@@ -40,6 +45,7 @@ func Init(zyosa *Zyosa) {
 		AdminRoute:     adminHandler,
 		JWTService:     jwtService,
 		AuthMiddleware: authMiddleware,
+		SessionRoute:   sessionHandler,
 	}
 
 	route.Init()

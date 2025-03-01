@@ -118,12 +118,9 @@ func (handler *Handler) Login(ctx *fiber.Ctx) error {
 		SameSite: "Strict",
 	})
 
-	return helpers.SuccessResponse(ctx, 200, handler.viper.GetBool("app.debug"), "Login success", map[string]interface{}{
-		"username": exist.Username,
-		"email":    exist.Email,
-		"first_name": exist.FirstName,
-		"last_name":  exist.LastName,
-	})
+	ctx.Locals("userId", exist.UUID)
+
+	return ctx.Next()
 }
 
 // @Summary Logout user

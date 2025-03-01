@@ -6,4 +6,5 @@ type IRoute interface {
 	Init()
 	initializeUserRoutes(router fiber.Router)
 	initializeAdminRoutes(router fiber.Router)
+	initializeSessionRoutes(router fiber.Router)
 }
