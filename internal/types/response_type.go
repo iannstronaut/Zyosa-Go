@@ -4,7 +4,7 @@ type ApiResponse[T any] struct {
 	Code         int           `json:"code"`
 	Content      T             `json:"content"`
 	Paging       *PageMetaData `json:"paging,omitempty"`
-	Message      string        `json:"message,omitempty"`
+	Message      any           `json:"message,omitempty"`
 	ShouldNotify bool          `json:"should_notify"`
 	Success      bool          `json:"success"`
 }

@@ -3,6 +3,9 @@ package core
 import (
 	"fmt"
 	"zyosa/internal/delivery/routes"
+	"zyosa/internal/domains/user"
+	"zyosa/internal/domains/user/repository"
+	"zyosa/internal/services"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
@@ -10,21 +13,28 @@ import (
 	"gorm.io/gorm"
 )
 
-type Zyosa struct{
+type Zyosa struct {
 	Viper *viper.Viper
-	App *fiber.App
-	DB *gorm.DB
+	App   *fiber.App
+	DB    *gorm.DB
+	JWTService *services.JWTService
 }
 
-func Init(zyosa *Zyosa){
+func Init(zyosa *Zyosa) {
+	jwtService := services.NewJWTService(zyosa.Viper.GetString("app.secret"))
+	userRepo := repository.NewUserRepository(zyosa.DB)
+	userHandler := user.NewHandler(userRepo, zyosa.Viper, jwtService)
+
 	route := routes.Route{
-		App: zyosa.App,
+		App:       zyosa.App,
+		UserRoute: userHandler,
+		JWTService: jwtService,
 	}
 
 	route.Init()
 }
 
-func (a *Zyosa) Start(){
+func (a *Zyosa) Start() {
 	err := a.App.Listen(fmt.Sprintf("%s:%s", a.Viper.GetString("app.host"), a.Viper.GetString("app.port")))
 	if err != nil {
 		logrus.Fatal(err)

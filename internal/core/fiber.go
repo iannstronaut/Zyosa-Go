@@ -10,14 +10,14 @@ import (
 
 func NewFiber(viper *viper.Viper) *fiber.App {
 	var app = fiber.New(fiber.Config{
-		AppName: viper.GetString("app.name"),
+		AppName:      viper.GetString("app.name"),
 		ErrorHandler: NewErrorHandler(viper.GetBool("app.debug")),
 	})
 
 	log := logger.New(logger.Config{
-		Format: "${time} [${method}] ${path} \t-\t ${status} ${latency}\n",
+		Format:     "${time} [${method}] ${path} \t-\t ${status} ${latency}\n",
 		TimeFormat: "[01-Jan-2006] [15:04:05]",
-		TimeZone: "Asia/Jakarta",
+		TimeZone:   "Asia/Jakarta",
 	})
 
 	app.Use(log)

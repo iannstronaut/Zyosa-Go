@@ -2,16 +2,16 @@ package utils
 
 import "golang.org/x/crypto/bcrypt"
 
-func HashPassword(password string, salt string) string {
+func HashPassword(password string, salt string) (string, error) {
 	salted := password + salt
 	hashedByte, err := bcrypt.GenerateFromPassword([]byte(salted), bcrypt.DefaultCost)
 	hashed := string(hashedByte)
 
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
-	return hashed
+	return hashed, nil
 }
 
 func ComparePassword(hashedPassword, password, salt string) bool {

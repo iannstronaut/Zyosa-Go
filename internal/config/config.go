@@ -17,15 +17,15 @@ type Config struct {
 	Auth struct {
 		AccessTokenExpMins  int    `yaml:"access_token_exp_mins"`
 		RefreshTokenExpDays int    `yaml:"refresh_token_exp_days"`
-		JWTSecret 			string `yaml:"jwt_secrets"`
-		JWTSalt 			string `yaml:"jwt_salt"`
+		JWTSecret           string `yaml:"jwt_secrets"`
+		JWTSalt             string `yaml:"jwt_salt"`
 	} `yaml:"auth"`
 	Database struct {
 		Host     string `yaml:"host"`
 		Port     int    `yaml:"port"`
 		User     string `yaml:"user"`
 		Password string `yaml:"password"`
-		Name   string `yaml:"name"`
+		Name     string `yaml:"name"`
 	} `yaml:"database"`
 }
 

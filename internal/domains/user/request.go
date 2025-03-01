@@ -2,7 +2,7 @@ package user
 
 import "github.com/go-playground/validator/v10"
 
-var validate = validator.New()
+var Validate = validator.New()
 
 type LoginRequest struct {
 	Username string `json:"username" validate:"required,min=3,max=50"`

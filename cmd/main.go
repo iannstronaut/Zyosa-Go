@@ -9,7 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var(
+var (
 	ZyosaApp *core.Zyosa
 )
 
@@ -17,10 +17,10 @@ var(
 // @version 1.0
 // @description Zyosa Api with Go Fiber
 // @host localhost:5000
-// @BasePath /
-func main(){
+// @BasePath /api
+func main() {
 	viper := config.NewConfig()
-	
+
 	app := core.NewFiber(viper)
 
 	app.Get("/docs/*", swagger.HandlerDefault)
@@ -32,8 +32,8 @@ func main(){
 
 	ZyosaApp = &core.Zyosa{
 		Viper: viper,
-		App: app,
-		DB: db,
+		App:   app,
+		DB:    db,
 	}
 
 	core.Init(ZyosaApp)

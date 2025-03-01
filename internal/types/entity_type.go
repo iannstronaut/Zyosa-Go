@@ -7,14 +7,14 @@ import (
 )
 
 type UUID struct {
-	ID      uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v7();index" json:"id"`
+	ID uuid.UUID `gorm:"type:char(36);primaryKey" json:"id"`
 }
 
 type IdIncrement struct {
-	ID        uint `gorm:"primaryKey;autoIncrement" json:"id"`
+	ID uint `gorm:"primaryKey;autoIncrement" json:"id"`
 }
 
 type Timestamps struct {
-	CreatedAt time.Time `gorm:"default:current_timestamp" json:"created_at"`
-	UpdatedAt time.Time `gorm:"default:current_timestamp" json:"updated_at"`
+	CreatedAt time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP" json:"created_at"`
+	UpdatedAt time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP" json:"updated_at"`
 }

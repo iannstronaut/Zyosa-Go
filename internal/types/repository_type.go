@@ -4,7 +4,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Repository[T any] struct{
+type Repository[T any] struct {
 	DB *gorm.DB
 }
 
@@ -33,7 +33,3 @@ func (r *Repository[T]) CountByID(id string) (int64, error) {
 	err := r.DB.Model(new(T)).Where("id = ?", id).Count(&count).Error
 	return count, err
 }
-
-
-
-
