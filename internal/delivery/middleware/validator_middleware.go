@@ -27,7 +27,7 @@ func EnsureJsonValidRequest[T any](ctx *fiber.Ctx) error {
 				errors[fieldErr.Field()] = fieldErr.Tag()
 			}
 		}
-		
+
 		return helpers.ErrorResponse(ctx, fiber.ErrBadRequest.Code, true, ValidationError{Errors: errors}.Errors)
 	}
 

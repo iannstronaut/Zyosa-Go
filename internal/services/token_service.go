@@ -3,14 +3,15 @@ package services
 import (
 	"fmt"
 	"time"
-	
+
 	"zyosa/internal/types"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
 type UserClaims struct {
-	UUID     string`json:"uuid"`
+	types.UUID
+	Roles string `json:"role"`
 	jwt.RegisteredClaims
 }
 
@@ -23,9 +24,10 @@ func NewJWTService(secret string) *JWTService {
 }
 
 // GenerateAccessToken membuat token JWT untuk user tertentu dengan waktu kedaluwarsa
-func (j *JWTService) GenerateAccessToken(uuid *types.UUID, expTime time.Duration) (string, error) {
+func (j *JWTService) GenerateAccessToken(uuid types.UUID, role string, expTime time.Duration) (string, error) {
 	claims := UserClaims{
-		UUID:     uuid.ID.String(),
+		UUID:  uuid,
+		Roles: role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(expTime)),
@@ -42,7 +44,7 @@ func (j *JWTService) GenerateAccessToken(uuid *types.UUID, expTime time.Duration
 }
 
 // ValidateAccessToken memvalidasi token JWT dan mengembalikan UserClaims jika valid
-func (j *JWTService) ValidateAccessToken(tokenStr string) (*string, error) {
+func (j *JWTService) ValidateAccessToken(tokenStr string) (*UserClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenStr, &UserClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(j.secret), nil
 	})
@@ -56,7 +58,7 @@ func (j *JWTService) ValidateAccessToken(tokenStr string) (*string, error) {
 		return nil, fmt.Errorf("invalid access token")
 	}
 
-	return &claims.UUID, nil
+	return claims, nil
 }
 
 // Unserialize hanya melakukan parsing token JWT tanpa validasi

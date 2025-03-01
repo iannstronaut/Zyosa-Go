@@ -10,9 +10,10 @@ import (
 )
 
 type Route struct {
-	App       *fiber.App
-	UserRoute *user.Handler
-	JWTService *services.JWTService
+	App            *fiber.App
+	UserRoute      *user.Handler
+	JWTService     *services.JWTService
+	AuthMiddleware *middleware.AuthMiddleware
 }
 
 func (r *Route) Init() {
@@ -42,4 +43,26 @@ func (r *Route) initializeUserRoutes(router fiber.Router) {
 		helpers.RateLimiterConfig(5, 3, "Too many requests, please try again later"),
 		middleware.EnsureJsonValidRequest[user.RegisterRequest],
 		r.UserRoute.Register)
+
+	router.Post("/logout",
+		helpers.RateLimiterConfig(5, 5, "Too many requests, please try again later"),
+		r.AuthMiddleware.EnsureAuthenticated("user"),
+		r.UserRoute.Logout)
+
+	router.Get("/profile",
+		helpers.RateLimiterConfig(1, 10, "Too many requests, please try again later"),
+		r.AuthMiddleware.EnsureAuthenticated("user"),
+		r.UserRoute.GetProfile)
+
+	router.Put("/profile/update",
+		helpers.RateLimiterConfig(1, 10, "Too many requests, please try again later"),
+		middleware.EnsureJsonValidRequest[user.UpdateProfileRequest],
+		r.AuthMiddleware.EnsureAuthenticated("user"),
+		r.UserRoute.UpdateProfile)
+
+	router.Put("/profile/update/password",
+		helpers.RateLimiterConfig(1, 10, "Too many requests, please try again later"),
+		middleware.EnsureJsonValidRequest[user.ChangePasswordRequest],
+		r.AuthMiddleware.EnsureAuthenticated("user"),
+		r.UserRoute.ChangePassword)
 }

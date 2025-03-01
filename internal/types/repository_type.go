@@ -1,6 +1,8 @@
 package types
 
 import (
+	"errors"
+
 	"gorm.io/gorm"
 )
 
@@ -20,8 +22,15 @@ func (r *Repository[T]) Delete(entity *T) error {
 	return r.DB.Delete(entity).Error
 }
 
-func (r *Repository[T]) FindByID(id T, entity *T) error {
-	return r.DB.Where("id = ?", id).First(entity).Error
+func (r *Repository[T]) FindByID(id string, entity *T) (*T, error) {
+	err := r.DB.Where("id = ?", id).First(entity).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, err
+		}
+		return nil, err
+	}
+	return entity, nil
 }
 
 func (r *Repository[T]) FindAll(limit int, offset int, entities *[]T) error {

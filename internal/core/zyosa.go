@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"zyosa/internal/delivery/middleware"
 	"zyosa/internal/delivery/routes"
 	"zyosa/internal/domains/user"
 	"zyosa/internal/domains/user/repository"
@@ -14,9 +15,9 @@ import (
 )
 
 type Zyosa struct {
-	Viper *viper.Viper
-	App   *fiber.App
-	DB    *gorm.DB
+	Viper      *viper.Viper
+	App        *fiber.App
+	DB         *gorm.DB
 	JWTService *services.JWTService
 }
 
@@ -25,10 +26,13 @@ func Init(zyosa *Zyosa) {
 	userRepo := repository.NewUserRepository(zyosa.DB)
 	userHandler := user.NewHandler(userRepo, zyosa.Viper, jwtService)
 
+	authMiddleware := middleware.NewAuthMiddleware(jwtService)
+
 	route := routes.Route{
-		App:       zyosa.App,
-		UserRoute: userHandler,
-		JWTService: jwtService,
+		App:            zyosa.App,
+		UserRoute:      userHandler,
+		JWTService:     jwtService,
+		AuthMiddleware: authMiddleware,
 	}
 
 	route.Init()
